@@ -209,3 +209,7 @@ CREATE TRIGGER update_user_profiles_updated_at
   BEFORE UPDATE ON user_profiles
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
+
+-- Allow policies that reference auth.users to run for authenticated sessions
+GRANT USAGE ON SCHEMA auth TO authenticated;
+GRANT SELECT ON TABLE auth.users TO authenticated;
