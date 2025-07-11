@@ -9,36 +9,26 @@ export const useAuth = () => {
   useEffect(() => {
     // Get initial session
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from('user_profiles')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .single();
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
         
-        setUser({
-          id: session.user.id,
-          email: session.user.email!,
-          role: session.user.user_metadata?.role || 'user',
-          created_at: session.user.created_at,
-          profile_completed: !!profile
-        });
-      }
-      setLoading(false);
-    };
+        if (error) {
+          console.error('Error getting session:', error);
+          setLoading(false);
+          return;
+        }
 
-    getSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
         if (session?.user) {
-          const { data: profile } = await supabase
+          // Check for user profile
+          const { data: profile, error: profileError } = await supabase
             .from('user_profiles')
             .select('*')
             .eq('user_id', session.user.id)
             .single();
+          
+          if (profileError && profileError.code !== 'PGRST116') {
+            console.error('Error fetching profile:', profileError);
+          }
           
           setUser({
             id: session.user.id,
@@ -48,6 +38,46 @@ export const useAuth = () => {
             profile_completed: !!profile
           });
         } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Error in getSession:', error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        try {
+          if (session?.user) {
+            // Check for user profile
+            const { data: profile, error: profileError } = await supabase
+              .from('user_profiles')
+              .select('*')
+              .eq('user_id', session.user.id)
+              .single();
+            
+            if (profileError && profileError.code !== 'PGRST116') {
+              console.error('Error fetching profile:', profileError);
+            }
+            
+            setUser({
+              id: session.user.id,
+              email: session.user.email!,
+              role: session.user.user_metadata?.role || 'user',
+              created_at: session.user.created_at,
+              profile_completed: !!profile
+            });
+          } else {
+            setUser(null);
+          }
+        } catch (error) {
+          console.error('Error in auth state change:', error);
           setUser(null);
         }
         setLoading(false);
