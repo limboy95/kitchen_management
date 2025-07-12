@@ -7,60 +7,32 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
     // Get initial session
     const getSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
         
+        if (!mounted) return;
+
         if (error) {
           console.error('Error getting session:', error);
+          setUser(null);
           setLoading(false);
           return;
         }
 
         if (session?.user) {
-          // Check for user profile
-          const { data: profile, error: profileError } = await supabase
-            .from('user_profiles')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .single();
-          
-          if (profileError && profileError.code !== 'PGRST116') {
-            console.error('Error fetching profile:', profileError);
-          }
-          
-          setUser({
-            id: session.user.id,
-            email: session.user.email!,
-            role: session.user.user_metadata?.role || 'user',
-            created_at: session.user.created_at,
-            profile_completed: !!profile
-          });
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error('Error in getSession:', error);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        try {
-          if (session?.user) {
+          try {
             // Check for user profile
             const { data: profile, error: profileError } = await supabase
               .from('user_profiles')
               .select('*')
               .eq('user_id', session.user.id)
-              .single();
+              .maybeSingle();
+            
+            if (!mounted) return;
             
             if (profileError && profileError.code !== 'PGRST116') {
               console.error('Error fetching profile:', profileError);
@@ -73,18 +45,91 @@ export const useAuth = () => {
               created_at: session.user.created_at,
               profile_completed: !!profile
             });
+          } catch (profileError) {
+            console.error('Profile fetch error:', profileError);
+            setUser({
+              id: session.user.id,
+              email: session.user.email!,
+              role: session.user.user_metadata?.role || 'user',
+              created_at: session.user.created_at,
+              profile_completed: false
+            });
+          }
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Error in getSession:', error);
+        if (mounted) {
+          setUser(null);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    getSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (!mounted) return;
+
+        try {
+          if (session?.user) {
+            try {
+              // Check for user profile
+              const { data: profile, error: profileError } = await supabase
+                .from('user_profiles')
+                .select('*')
+                .eq('user_id', session.user.id)
+                .maybeSingle();
+              
+              if (!mounted) return;
+              
+              if (profileError && profileError.code !== 'PGRST116') {
+                console.error('Error fetching profile:', profileError);
+              }
+              
+              setUser({
+                id: session.user.id,
+                email: session.user.email!,
+                role: session.user.user_metadata?.role || 'user',
+                created_at: session.user.created_at,
+                profile_completed: !!profile
+              });
+            } catch (profileError) {
+              console.error('Profile fetch error in auth change:', profileError);
+              setUser({
+                id: session.user.id,
+                email: session.user.email!,
+                role: session.user.user_metadata?.role || 'user',
+                created_at: session.user.created_at,
+                profile_completed: false
+              });
+            }
           } else {
             setUser(null);
           }
         } catch (error) {
           console.error('Error in auth state change:', error);
-          setUser(null);
+          if (mounted) {
+            setUser(null);
+          }
         }
-        setLoading(false);
+        
+        if (mounted) {
+          setLoading(false);
+        }
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signUp = async (email: string, password: string, acceptedPrivacy: boolean) => {
