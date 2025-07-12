@@ -9,57 +9,25 @@ export const useAuth = () => {
   useEffect(() => {
     let mounted = true;
 
-    // Get initial session
     const getSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
         
         if (!mounted) return;
 
-        if (error) {
-          console.error('Error getting session:', error);
-          setUser(null);
-          setLoading(false);
-          return;
-        }
-
         if (session?.user) {
-          try {
-            // Check for user profile
-            const { data: profile, error: profileError } = await supabase
-              .from('user_profiles')
-              .select('*')
-              .eq('user_id', session.user.id)
-              .maybeSingle();
-            
-            if (!mounted) return;
-            
-            if (profileError && profileError.code !== 'PGRST116') {
-              console.error('Error fetching profile:', profileError);
-            }
-            
-            setUser({
-              id: session.user.id,
-              email: session.user.email!,
-              role: session.user.user_metadata?.role || 'user',
-              created_at: session.user.created_at,
-              profile_completed: !!profile
-            });
-          } catch (profileError) {
-            console.error('Profile fetch error:', profileError);
-            setUser({
-              id: session.user.id,
-              email: session.user.email!,
-              role: session.user.user_metadata?.role || 'user',
-              created_at: session.user.created_at,
-              profile_completed: false
-            });
-          }
+          setUser({
+            id: session.user.id,
+            email: session.user.email!,
+            role: session.user.user_metadata?.role || 'user',
+            created_at: session.user.created_at,
+            profile_completed: true // Assume profile is completed for now
+          });
         } else {
           setUser(null);
         }
       } catch (error) {
-        console.error('Error in getSession:', error);
+        console.error('Auth error:', error);
         if (mounted) {
           setUser(null);
         }
@@ -72,52 +40,20 @@ export const useAuth = () => {
 
     getSession();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return;
 
-        try {
-          if (session?.user) {
-            try {
-              // Check for user profile
-              const { data: profile, error: profileError } = await supabase
-                .from('user_profiles')
-                .select('*')
-                .eq('user_id', session.user.id)
-                .maybeSingle();
-              
-              if (!mounted) return;
-              
-              if (profileError && profileError.code !== 'PGRST116') {
-                console.error('Error fetching profile:', profileError);
-              }
-              
-              setUser({
-                id: session.user.id,
-                email: session.user.email!,
-                role: session.user.user_metadata?.role || 'user',
-                created_at: session.user.created_at,
-                profile_completed: !!profile
-              });
-            } catch (profileError) {
-              console.error('Profile fetch error in auth change:', profileError);
-              setUser({
-                id: session.user.id,
-                email: session.user.email!,
-                role: session.user.user_metadata?.role || 'user',
-                created_at: session.user.created_at,
-                profile_completed: false
-              });
-            }
-          } else {
-            setUser(null);
-          }
-        } catch (error) {
-          console.error('Error in auth state change:', error);
-          if (mounted) {
-            setUser(null);
-          }
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email!,
+            role: session.user.user_metadata?.role || 'user',
+            created_at: session.user.created_at,
+            profile_completed: true // Assume profile is completed for now
+          });
+        } else {
+          setUser(null);
         }
         
         if (mounted) {
