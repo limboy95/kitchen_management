@@ -8,10 +8,37 @@ import {
   Calendar, 
   Package, 
   Trash2, 
-  Edit,
-  AlertTriangle
+  AlertTriangle,
+  X
 } from 'lucide-react';
 import { FridgeItem } from '../types';
+
+const commonIngredients = [
+  { name: 'Melk', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'liter' },
+  { name: 'Brood', image: 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Eieren', image: 'https://images.pexels.com/photos/162712/egg-white-food-protein-162712.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Kaas', image: 'https://images.pexels.com/photos/773253/pexels-photo-773253.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Boter', image: 'https://images.pexels.com/photos/209540/pexels-photo-209540.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Yoghurt', image: 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Appels', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Bananen', image: 'https://images.pexels.com/photos/61127/pexels-photo-61127.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Tomaten', image: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Uien', image: 'https://images.pexels.com/photos/533342/pexels-photo-533342.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Aardappelen', image: 'https://images.pexels.com/photos/144248/potatoes-vegetables-erdfrucht-bio-144248.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'kg' },
+  { name: 'Wortelen', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Paprika', image: 'https://images.pexels.com/photos/594137/pexels-photo-594137.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Komkommer', image: 'https://images.pexels.com/photos/37528/cucumber-salad-food-healthy-37528.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Kip', image: 'https://images.pexels.com/photos/616354/pexels-photo-616354.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Gehakt', image: 'https://images.pexels.com/photos/3688/food-dinner-lunch-unhealthy.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Vis', image: 'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Rijst', image: 'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Pasta', image: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Olijfolie', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Sla', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Courgette', image: 'https://images.pexels.com/photos/128420/pexels-photo-128420.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Champignons', image: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Citroen', image: 'https://images.pexels.com/photos/1414130/pexels-photo-1414130.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' }
+];
 
 export const Fridge: React.FC = () => {
   const { user } = useAuth();
@@ -19,20 +46,10 @@ export const Fridge: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [newItem, setNewItem] = useState({
-    name: '',
-    quantity: 1,
-    unit: 'stuks',
-    expiry_date: ''
-  });
-
-  const commonIngredients = [
-    'Melk', 'Brood', 'Eieren', 'Kaas', 'Boter', 'Yoghurt', 'Appels', 'Bananen',
-    'Tomaten', 'Uien', 'Aardappelen', 'Wortelen', 'Paprika', 'Komkommer',
-    'Kip', 'Gehakt', 'Vis', 'Rijst', 'Pasta', 'Olijfolie', 'Zout', 'Peper'
-  ];
-
-  const units = ['stuks', 'kg', 'gram', 'liter', 'ml', 'pakken', 'blikken'];
+  const [ingredientSearch, setIngredientSearch] = useState('');
+  const [selectedIngredient, setSelectedIngredient] = useState<any>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [expiryDate, setExpiryDate] = useState('');
 
   useEffect(() => {
     fetchFridgeItems();
@@ -57,9 +74,8 @@ export const Fridge: React.FC = () => {
     }
   };
 
-  const handleAddItem = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
+  const handleAddItem = async () => {
+    if (!user || !selectedIngredient) return;
 
     try {
       const { data, error } = await supabase
@@ -67,10 +83,11 @@ export const Fridge: React.FC = () => {
         .insert([
           {
             user_id: user.id,
-            name: newItem.name,
-            quantity: newItem.quantity,
-            unit: newItem.unit,
-            expiry_date: newItem.expiry_date || null
+            name: selectedIngredient.name,
+            quantity: quantity,
+            unit: selectedIngredient.unit,
+            expiry_date: expiryDate || null,
+            image_url: selectedIngredient.image
           }
         ])
         .select()
@@ -79,8 +96,11 @@ export const Fridge: React.FC = () => {
       if (error) throw error;
 
       setItems([data, ...items]);
-      setNewItem({ name: '', quantity: 1, unit: 'stuks', expiry_date: '' });
+      setSelectedIngredient(null);
+      setQuantity(1);
+      setExpiryDate('');
       setShowAddForm(false);
+      setIngredientSearch('');
     } catch (error) {
       console.error('Error adding item:', error);
     }
@@ -102,6 +122,10 @@ export const Fridge: React.FC = () => {
 
   const filteredItems = items.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredIngredients = commonIngredients.filter(ingredient =>
+    ingredient.name.toLowerCase().includes(ingredientSearch.toLowerCase())
   );
 
   const isExpiringSoon = (expiryDate: string) => {
@@ -163,93 +187,133 @@ export const Fridge: React.FC = () => {
           </div>
         </div>
 
-        {/* Add Item Form */}
+        {/* Add Item Modal */}
         {showAddForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Nieuw Ingrediënt Toevoegen
-              </h3>
-              <form onSubmit={handleAddItem} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ingrediënt
-                  </label>
-                  <input
-                    type="text"
-                    value={newItem.name}
-                    onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-                    list="ingredients"
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder="Bijv. melk, brood, eieren..."
-                  />
-                  <datalist id="ingredients">
-                    {commonIngredients.map(ingredient => (
-                      <option key={ingredient} value={ingredient} />
+            <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Ingrediënt Toevoegen
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowAddForm(false);
+                    setSelectedIngredient(null);
+                    setIngredientSearch('');
+                    setQuantity(1);
+                    setExpiryDate('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              {!selectedIngredient ? (
+                <>
+                  {/* Search ingredients */}
+                  <div className="mb-4">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Zoek ingrediënten..."
+                        value={ingredientSearch}
+                        onChange={(e) => setIngredientSearch(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Ingredient grid */}
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                    {filteredIngredients.map((ingredient) => (
+                      <button
+                        key={ingredient.name}
+                        onClick={() => setSelectedIngredient(ingredient)}
+                        className="flex flex-col items-center p-3 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-colors"
+                      >
+                        <img
+                          src={ingredient.image}
+                          alt={ingredient.name}
+                          className="w-16 h-16 object-cover rounded-lg mb-2"
+                        />
+                        <span className="text-xs text-center text-gray-700 font-medium">
+                          {ingredient.name}
+                        </span>
+                      </button>
                     ))}
-                  </datalist>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Aantal
-                    </label>
-                    <input
-                      type="number"
-                      value={newItem.quantity}
-                      onChange={(e) => setNewItem({ ...newItem, quantity: parseInt(e.target.value) })}
-                      min="1"
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Selected ingredient details */}
+                  <div className="flex items-center mb-6 p-4 bg-orange-50 rounded-lg">
+                    <img
+                      src={selectedIngredient.image}
+                      alt={selectedIngredient.name}
+                      className="w-16 h-16 object-cover rounded-lg mr-4"
                     />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Eenheid
-                    </label>
-                    <select
-                      value={newItem.unit}
-                      onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    <div className="flex-1">
+                      <h4 className="text-lg font-medium text-gray-900">
+                        {selectedIngredient.name}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Eenheid: {selectedIngredient.unit}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setSelectedIngredient(null)}
+                      className="text-gray-400 hover:text-gray-600"
                     >
-                      {units.map(unit => (
-                        <option key={unit} value={unit}>{unit}</option>
-                      ))}
-                    </select>
+                      <X className="h-5 w-5" />
+                    </button>
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Houdbaarheidsdatum (optioneel)
-                  </label>
-                  <input
-                    type="date"
-                    value={newItem.expiry_date}
-                    onChange={(e) => setNewItem({ ...newItem, expiry_date: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  />
-                </div>
+                  {/* Quantity and expiry */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Aantal ({selectedIngredient.unit})
+                      </label>
+                      <input
+                        type="number"
+                        value={quantity}
+                        onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                        min="1"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
 
-                <div className="flex justify-end space-x-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddForm(false)}
-                    className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                  >
-                    Annuleren
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md transition-colors"
-                  >
-                    Toevoegen
-                  </button>
-                </div>
-              </form>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Houdbaarheidsdatum (optioneel)
+                      </label>
+                      <input
+                        type="date"
+                        value={expiryDate}
+                        onChange={(e) => setExpiryDate(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+
+                    <div className="flex justify-end space-x-3 pt-4">
+                      <button
+                        onClick={() => setSelectedIngredient(null)}
+                        className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                      >
+                        Terug
+                      </button>
+                      <button
+                        onClick={handleAddItem}
+                        className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md transition-colors"
+                      >
+                        Toevoegen
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -284,21 +348,26 @@ export const Fridge: React.FC = () => {
                   'border-gray-200'
                 }`}
               >
-                <div className="flex justify-between items-start mb-3">
+                <div className="flex items-start mb-3">
+                  {item.image_url && (
+                    <img
+                      src={item.image_url}
+                      alt={item.name}
+                      className="w-12 h-12 object-cover rounded-lg mr-3"
+                    />
+                  )}
                   <div className="flex-1">
                     <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
                     <p className="text-sm text-gray-600">
                       {item.quantity} {item.unit}
                     </p>
                   </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleDeleteItem(item.id)}
-                      className="text-red-500 hover:text-red-700 transition-colors"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => handleDeleteItem(item.id)}
+                    className="text-red-500 hover:text-red-700 transition-colors"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
 
                 {item.expiry_date && (
