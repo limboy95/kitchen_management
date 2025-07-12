@@ -9,20 +9,61 @@ import {
   ChefHat, 
   Star, 
   Filter,
-  Sparkles
+  Sparkles,
+  Euro,
+  TrendingDown,
+  ShoppingCart,
+  Zap
 } from 'lucide-react';
 import { Recipe, FridgeItem } from '../types';
 
+interface RecipeWithSavings extends Recipe {
+  matchScore?: number;
+  matchingIngredients?: string[];
+  missingIngredients?: string[];
+  totalSavings?: number;
+  bonusItems?: Array<{
+    name: string;
+    originalPrice: number;
+    bonusPrice: number;
+    savings: number;
+  }>;
+}
+
 export const Recipes: React.FC = () => {
   const { user } = useAuth();
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipes, setRecipes] = useState<RecipeWithSavings[]>([]);
   const [fridgeItems, setFridgeItems] = useState<FridgeItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('');
   const [showPersonalized, setShowPersonalized] = useState(false);
+  const [showBonusOnly, setShowBonusOnly] = useState(false);
+  const [loadingBonuses, setLoadingBonuses] = useState(false);
 
-  const mockRecipes: Recipe[] = [
+  // Mock Albert Heijn bonus data
+  const ahBonusItems = [
+    { name: 'Kip', originalPrice: 8.99, bonusPrice: 6.99, category: 'vlees' },
+    { name: 'Pasta', originalPrice: 1.49, bonusPrice: 0.99, category: 'pasta' },
+    { name: 'Tomaten', originalPrice: 2.99, bonusPrice: 1.99, category: 'groenten' },
+    { name: 'Mozzarella', originalPrice: 3.49, bonusPrice: 2.49, category: 'zuivel' },
+    { name: 'Olijfolie', originalPrice: 4.99, bonusPrice: 3.99, category: 'olie' },
+    { name: 'Paprika', originalPrice: 2.49, bonusPrice: 1.49, category: 'groenten' },
+    { name: 'Uien', originalPrice: 1.99, bonusPrice: 1.29, category: 'groenten' },
+    { name: 'Champignons', originalPrice: 2.29, bonusPrice: 1.59, category: 'groenten' },
+    { name: 'Kaas', originalPrice: 4.99, bonusPrice: 3.49, category: 'zuivel' },
+    { name: 'Brood', originalPrice: 1.89, bonusPrice: 1.29, category: 'bakkerij' },
+    { name: 'Eieren', originalPrice: 2.99, bonusPrice: 2.19, category: 'zuivel' },
+    { name: 'Melk', originalPrice: 1.49, bonusPrice: 0.99, category: 'zuivel' },
+    { name: 'Yoghurt', originalPrice: 2.49, bonusPrice: 1.79, category: 'zuivel' },
+    { name: 'Quinoa', originalPrice: 3.99, bonusPrice: 2.99, category: 'granen' },
+    { name: 'Avocado', originalPrice: 1.99, bonusPrice: 1.49, category: 'fruit' },
+    { name: 'Zalm', originalPrice: 12.99, bonusPrice: 9.99, category: 'vis' },
+    { name: 'Rundvlees', originalPrice: 15.99, bonusPrice: 11.99, category: 'vlees' },
+    { name: 'Rode wijn', originalPrice: 8.99, bonusPrice: 5.99, category: 'dranken' }
+  ];
+
+  const mockRecipes: RecipeWithSavings[] = [
     {
       id: '1',
       title: 'Mediterrane Pasta Salade',
@@ -132,6 +173,24 @@ export const Recipes: React.FC = () => {
       difficulty: 'moeilijk',
       image_url: 'https://images.pexels.com/photos/4113717/pexels-photo-4113717.jpeg?auto=compress&cs=tinysrgb&w=400',
       tags: ['Frans', 'Vlees', 'Feestelijk']
+    },
+    {
+      id: '7',
+      title: 'Kip Paprika Stoofpot',
+      description: 'Hartige stoofpot met kip, paprika en champignons',
+      ingredients: ['Kip', 'Paprika', 'Champignons', 'Uien', 'Tomaten', 'Bouillon'],
+      instructions: [
+        'Braad de kip rondom bruin',
+        'Voeg groenten toe en fruit aan',
+        'Voeg bouillon toe en laat sudderen',
+        'Serveer met rijst of aardappelen'
+      ],
+      prep_time: 20,
+      cook_time: 40,
+      servings: 4,
+      difficulty: 'makkelijk',
+      image_url: 'https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=400',
+      tags: ['Comfort food', 'Gezinsvriendelijk', 'Eenpansgerecht']
     }
   ];
 
@@ -147,7 +206,10 @@ export const Recipes: React.FC = () => {
           .eq('user_id', user.id);
 
         setFridgeItems(fridgeData || []);
-        setRecipes(mockRecipes);
+        
+        // Calculate recipe matches and savings
+        const recipesWithAnalysis = calculateRecipeAnalysis(mockRecipes, fridgeData || []);
+        setRecipes(recipesWithAnalysis);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -158,28 +220,76 @@ export const Recipes: React.FC = () => {
     fetchData();
   }, [user]);
 
-  const getPersonalizedRecipes = () => {
-    if (!showPersonalized) return recipes;
-
+  const calculateRecipeAnalysis = (recipes: Recipe[], fridgeItems: FridgeItem[]): RecipeWithSavings[] => {
     const availableIngredients = fridgeItems.map(item => item.name.toLowerCase());
     
-    return recipes
-      .map(recipe => {
-        const matchingIngredients = recipe.ingredients.filter(ingredient =>
-          availableIngredients.some(available => 
-            available.includes(ingredient.toLowerCase()) || 
-            ingredient.toLowerCase().includes(available)
-          )
-        );
-        
-        return {
-          ...recipe,
-          matchScore: matchingIngredients.length,
-          matchingIngredients
-        };
-      })
-      .filter(recipe => recipe.matchScore > 0)
-      .sort((a, b) => b.matchScore - a.matchScore);
+    return recipes.map(recipe => {
+      // Calculate ingredient matches
+      const matchingIngredients = recipe.ingredients.filter(ingredient =>
+        availableIngredients.some(available => 
+          available.includes(ingredient.toLowerCase()) || 
+          ingredient.toLowerCase().includes(available)
+        )
+      );
+
+      const missingIngredients = recipe.ingredients.filter(ingredient =>
+        !matchingIngredients.includes(ingredient)
+      );
+
+      // Calculate Albert Heijn bonus savings
+      const bonusItems = missingIngredients
+        .map(ingredient => {
+          const bonusItem = ahBonusItems.find(bonus => 
+            bonus.name.toLowerCase().includes(ingredient.toLowerCase()) ||
+            ingredient.toLowerCase().includes(bonus.name.toLowerCase())
+          );
+          
+          if (bonusItem) {
+            return {
+              name: bonusItem.name,
+              originalPrice: bonusItem.originalPrice,
+              bonusPrice: bonusItem.bonusPrice,
+              savings: bonusItem.originalPrice - bonusItem.bonusPrice
+            };
+          }
+          return null;
+        })
+        .filter(Boolean) as Array<{
+          name: string;
+          originalPrice: number;
+          bonusPrice: number;
+          savings: number;
+        }>;
+
+      const totalSavings = bonusItems.reduce((sum, item) => sum + item.savings, 0);
+
+      return {
+        ...recipe,
+        matchScore: matchingIngredients.length,
+        matchingIngredients,
+        missingIngredients,
+        bonusItems,
+        totalSavings
+      };
+    });
+  };
+
+  const getPersonalizedRecipes = () => {
+    let filteredRecipes = recipes;
+
+    if (showPersonalized) {
+      filteredRecipes = recipes
+        .filter(recipe => recipe.matchScore && recipe.matchScore > 0)
+        .sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+    }
+
+    if (showBonusOnly) {
+      filteredRecipes = filteredRecipes.filter(recipe => 
+        recipe.bonusItems && recipe.bonusItems.length > 0
+      );
+    }
+
+    return filteredRecipes;
   };
 
   const filteredRecipes = getPersonalizedRecipes().filter(recipe => {
@@ -191,6 +301,17 @@ export const Recipes: React.FC = () => {
     
     return matchesSearch && matchesDifficulty;
   });
+
+  const refreshBonuses = async () => {
+    setLoadingBonuses(true);
+    // Simulate AI agent fetching latest AH bonuses
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Recalculate with "updated" bonus data
+    const recipesWithAnalysis = calculateRecipeAnalysis(mockRecipes, fridgeItems);
+    setRecipes(recipesWithAnalysis);
+    setLoadingBonuses(false);
+  };
 
   if (loading) {
     return (
@@ -212,17 +333,31 @@ export const Recipes: React.FC = () => {
               Ontdek heerlijke recepten voor elke gelegenheid
             </p>
           </div>
-          <button
-            onClick={() => setShowPersonalized(!showPersonalized)}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-              showPersonalized
-                ? 'bg-orange-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            <Sparkles className="h-5 w-5" />
-            <span>Gepersonaliseerd</span>
-          </button>
+          <div className="flex space-x-3">
+            <button
+              onClick={refreshBonuses}
+              disabled={loadingBonuses}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                loadingBonuses
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}
+            >
+              <Zap className={`h-5 w-5 ${loadingBonuses ? 'animate-spin' : ''}`} />
+              <span>{loadingBonuses ? 'Vernieuwen...' : 'AH Bonussen'}</span>
+            </button>
+            <button
+              onClick={() => setShowPersonalized(!showPersonalized)}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                showPersonalized
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              <Sparkles className="h-5 w-5" />
+              <span>Gepersonaliseerd</span>
+            </button>
+          </div>
         </div>
 
         {/* Search and Filters */}
@@ -254,6 +389,21 @@ export const Recipes: React.FC = () => {
                 <option value="moeilijk">Moeilijk</option>
               </select>
             </div>
+          </div>
+
+          {/* Filter toggles */}
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setShowBonusOnly(!showBonusOnly)}
+              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                showBonusOnly
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              <Euro className="h-4 w-4" />
+              <span>Alleen met AH bonus</span>
+            </button>
           </div>
 
           {showPersonalized && fridgeItems.length > 0 && (
@@ -288,7 +438,7 @@ export const Recipes: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRecipes.map((recipe: any) => (
+            {filteredRecipes.map((recipe: RecipeWithSavings) => (
               <div key={recipe.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
                 <div className="relative">
                   <img
@@ -296,11 +446,19 @@ export const Recipes: React.FC = () => {
                     alt={recipe.title}
                     className="w-full h-48 object-cover"
                   />
-                  {showPersonalized && recipe.matchScore > 0 && (
-                    <div className="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-                      {recipe.matchScore} match{recipe.matchScore > 1 ? 'es' : ''}
-                    </div>
-                  )}
+                  <div className="absolute top-2 right-2 flex flex-col gap-2">
+                    {showPersonalized && recipe.matchScore && recipe.matchScore > 0 && (
+                      <div className="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        {recipe.matchScore} match{recipe.matchScore > 1 ? 'es' : ''}
+                      </div>
+                    )}
+                    {recipe.totalSavings && recipe.totalSavings > 0 && (
+                      <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
+                        <TrendingDown className="h-3 w-3 mr-1" />
+                        €{recipe.totalSavings.toFixed(2)}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 
                 <div className="p-4">
@@ -353,9 +511,42 @@ export const Recipes: React.FC = () => {
                     </div>
                   )}
 
-                  <button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition-colors">
-                    Bekijk Recept
-                  </button>
+                  {recipe.bonusItems && recipe.bonusItems.length > 0 && (
+                    <div className="mb-3 p-3 bg-green-50 rounded-lg">
+                      <p className="text-xs text-green-700 font-medium mb-2 flex items-center">
+                        <Euro className="h-3 w-3 mr-1" />
+                        Albert Heijn Bonus besparingen:
+                      </p>
+                      <div className="space-y-1">
+                        {recipe.bonusItems.slice(0, 2).map((item, index) => (
+                          <div key={index} className="flex justify-between text-xs">
+                            <span className="text-green-800">{item.name}</span>
+                            <span className="text-green-600 font-medium">-€{item.savings.toFixed(2)}</span>
+                          </div>
+                        ))}
+                        {recipe.bonusItems.length > 2 && (
+                          <p className="text-xs text-green-600">+{recipe.bonusItems.length - 2} meer items</p>
+                        )}
+                        <div className="border-t border-green-200 pt-1 mt-1">
+                          <div className="flex justify-between text-xs font-medium">
+                            <span className="text-green-800">Totaal bespaard:</span>
+                            <span className="text-green-600">€{recipe.totalSavings?.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex space-x-2">
+                    <button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition-colors">
+                      Bekijk Recept
+                    </button>
+                    {recipe.missingIngredients && recipe.missingIngredients.length > 0 && (
+                      <button className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg transition-colors">
+                        <ShoppingCart className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

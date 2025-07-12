@@ -42,3 +42,11 @@ export interface Recipe {
   image_url?: string;
   tags: string[];
 }
+
+export interface AHBonusItem {
+  name: string;
+  originalPrice: number;
+  bonusPrice: number;
+  category: string;
+  validUntil?: string;
+}
