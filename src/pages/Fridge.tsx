@@ -38,6 +38,143 @@ const commonIngredients = [
   { name: 'Courgette', image: 'https://images.pexels.com/photos/128420/pexels-photo-128420.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
   { name: 'Champignons', image: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
   { name: 'Citroen', image: 'https://images.pexels.com/photos/1414130/pexels-photo-1414130.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' }
+  
+  // Vlees & Vis
+  { name: 'Zalm', image: 'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Tonijn', image: 'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Garnalen', image: 'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Rundvlees', image: 'https://images.pexels.com/photos/3688/food-dinner-lunch-unhealthy.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Varkensvlees', image: 'https://images.pexels.com/photos/3688/food-dinner-lunch-unhealthy.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Spek', image: 'https://images.pexels.com/photos/3688/food-dinner-lunch-unhealthy.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Worst', image: 'https://images.pexels.com/photos/3688/food-dinner-lunch-unhealthy.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Ham', image: 'https://images.pexels.com/photos/3688/food-dinner-lunch-unhealthy.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  
+  // Zuivel
+  { name: 'Mozzarella', image: 'https://images.pexels.com/photos/773253/pexels-photo-773253.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Parmezaan', image: 'https://images.pexels.com/photos/773253/pexels-photo-773253.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Feta', image: 'https://images.pexels.com/photos/773253/pexels-photo-773253.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Roomkaas', image: 'https://images.pexels.com/photos/773253/pexels-photo-773253.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Slagroom', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Crème fraîche', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Kwark', image: 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  
+  // Groenten
+  { name: 'Broccoli', image: 'https://images.pexels.com/photos/47347/broccoli-vegetable-food-healthy-47347.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Bloemkool', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Spinazie', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Rucola', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'IJsbergsla', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Aubergine', image: 'https://images.pexels.com/photos/128420/pexels-photo-128420.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Rode paprika', image: 'https://images.pexels.com/photos/594137/pexels-photo-594137.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Gele paprika', image: 'https://images.pexels.com/photos/594137/pexels-photo-594137.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Rode ui', image: 'https://images.pexels.com/photos/533342/pexels-photo-533342.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Sjalot', image: 'https://images.pexels.com/photos/533342/pexels-photo-533342.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Knoflook', image: 'https://images.pexels.com/photos/533342/pexels-photo-533342.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Gember', image: 'https://images.pexels.com/photos/533342/pexels-photo-533342.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Prei', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Selderij', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Radijs', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Rode biet', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Venkel', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Asperges', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Mais', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Erwten', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Bonen', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  
+  // Fruit
+  { name: 'Sinaasappel', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Limoen', image: 'https://images.pexels.com/photos/1414130/pexels-photo-1414130.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Peer', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Druiven', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Aardbeien', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Blauwe bessen', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Frambozen', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Mango', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Ananas', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Kiwi', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Avocado', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  
+  // Granen & Pasta
+  { name: 'Spaghetti', image: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Penne', image: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Fusilli', image: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Basmati rijst', image: 'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Jasmijn rijst', image: 'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Quinoa', image: 'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Couscous', image: 'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Bulgur', image: 'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Havermout', image: 'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Meel', image: 'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Volkoren brood', image: 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Wit brood', image: 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  
+  // Kruiden & Specerijen
+  { name: 'Basilicum', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Peterselie', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Koriander', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Dille', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Tijm', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Rozemarijn', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Oregano', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Munt', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  
+  // Oliën & Azijnen
+  { name: 'Zonnebloemolie', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Kokosolie', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Sesamolie', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Balsamico azijn', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Witte wijnazijn', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Appelazijn', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  
+  // Noten & Zaden
+  { name: 'Amandelen', image: 'https://images.pexels.com/photos/1295572/pexels-photo-1295572.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Walnoten', image: 'https://images.pexels.com/photos/1295572/pexels-photo-1295572.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Pijnboompitten', image: 'https://images.pexels.com/photos/1295572/pexels-photo-1295572.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Zonnebloempitten', image: 'https://images.pexels.com/photos/1295572/pexels-photo-1295572.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Pompoenpitten', image: 'https://images.pexels.com/photos/1295572/pexels-photo-1295572.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Sesamzaad', image: 'https://images.pexels.com/photos/1295572/pexels-photo-1295572.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Chiazaad', image: 'https://images.pexels.com/photos/1295572/pexels-photo-1295572.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Lijnzaad', image: 'https://images.pexels.com/photos/1295572/pexels-photo-1295572.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  
+  // Conserven & Gedroogd
+  { name: 'Tomaten in blik', image: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'blik' },
+  { name: 'Kikkererwten', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'blik' },
+  { name: 'Zwarte bonen', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'blik' },
+  { name: 'Linzen', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Gedroogde tomaten', image: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Olijven', image: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Kappertjes', image: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  
+  // Sauzen & Condimenten
+  { name: 'Sojasaus', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Vissaus', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Hoisinsaus', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Sriracha', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Mayonaise', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Mosterd', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Ketchup', image: 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Tomatenpuree', image: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Kokosmelk', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'ml' },
+  { name: 'Bouillon', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'blokjes' },
+  
+  // Diepvries
+  { name: 'Diepvries erwten', image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Diepvries spinazie', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Diepvries bessen', image: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  { name: 'Diepvries garnalen', image: 'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
+  
+  // Bakkerij
+  { name: 'Croissants', image: 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Bagels', image: 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Pita brood', image: 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  { name: 'Tortilla wraps', image: 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
+  
+  // Dranken
+  { name: 'Sinaasappelsap', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'liter' },
+  { name: 'Appelsap', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'liter' },
+  { name: 'Witte wijn', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'fles' },
+  { name: 'Rode wijn', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'fles' },
+  { name: 'Bier', image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'fles' }
 ];
 
 export const Fridge: React.FC = () => {
