@@ -13,9 +13,13 @@ import {
   Euro,
   TrendingDown,
   ShoppingCart,
-  Zap
+  Zap,
+  RefreshCw,
+  Calendar,
+  Database
 } from 'lucide-react';
 import { Recipe, FridgeItem } from '../types';
+import { ahBonusService } from '../services/ahBonusService';
 
 interface RecipeWithSavings extends Recipe {
   matchScore?: number;
@@ -40,6 +44,11 @@ export const Recipes: React.FC = () => {
   const [showPersonalized, setShowPersonalized] = useState(false);
   const [showBonusOnly, setShowBonusOnly] = useState(false);
   const [loadingBonuses, setLoadingBonuses] = useState(false);
+  const [bonusStatus, setBonusStatus] = useState<{
+    lastUpdate: Date | null;
+    itemCount: number;
+    source: string;
+  }>({ lastUpdate: null, itemCount: 0, source: 'none' });
 
   // Mock Albert Heijn bonus data
   const ahBonusItems = [
@@ -207,11 +216,22 @@ export const Recipes: React.FC = () => {
 
         setFridgeItems(fridgeData || []);
         
-        // Calculate recipe matches and savings
-        const recipesWithAnalysis = calculateRecipeAnalysis(mockRecipes, fridgeData || []);
+        // Fetch AH bonuses
+        const bonusResponse = await ahBonusService.getBonuses();
+        setBonusStatus({
+          lastUpdate: new Date(bonusResponse.lastUpdated),
+          itemCount: bonusResponse.bonuses.length,
+          source: bonusResponse.source
+        });
+        
+        // Calculate recipe matches and savings with real bonus data
+        const recipesWithAnalysis = calculateRecipeAnalysis(mockRecipes, fridgeData || [], bonusResponse.bonuses);
         setRecipes(recipesWithAnalysis);
       } catch (error) {
         console.error('Error fetching data:', error);
+        // Fallback to mock data if AH service fails
+        const recipesWithAnalysis = calculateRecipeAnalysis(mockRecipes, fridgeData || []);
+        setRecipes(recipesWithAnalysis);
       } finally {
         setLoading(false);
       }
@@ -220,7 +240,7 @@ export const Recipes: React.FC = () => {
     fetchData();
   }, [user]);
 
-  const calculateRecipeAnalysis = (recipes: Recipe[], fridgeItems: FridgeItem[]): RecipeWithSavings[] => {
+  const calculateRecipeAnalysis = (recipes: Recipe[], fridgeItems: FridgeItem[], bonusItems?: any[]): RecipeWithSavings[] => {
     const availableIngredients = fridgeItems.map(item => item.name.toLowerCase());
     
     return recipes.map(recipe => {
@@ -236,10 +256,12 @@ export const Recipes: React.FC = () => {
         !matchingIngredients.includes(ingredient)
       );
 
-      // Calculate Albert Heijn bonus savings
-      const bonusItems = missingIngredients
+      // Calculate Albert Heijn bonus savings using real data
+      const recipeBonusItems = missingIngredients
         .map(ingredient => {
-          const bonusItem = ahBonusItems.find(bonus => 
+          // Use real bonus data if available, otherwise fall back to mock data
+          const bonusData = bonusItems || ahBonusItems;
+          const bonusItem = bonusData.find((bonus: any) => 
             bonus.name.toLowerCase().includes(ingredient.toLowerCase()) ||
             ingredient.toLowerCase().includes(bonus.name.toLowerCase())
           );
@@ -249,7 +271,9 @@ export const Recipes: React.FC = () => {
               name: bonusItem.name,
               originalPrice: bonusItem.originalPrice,
               bonusPrice: bonusItem.bonusPrice,
-              savings: bonusItem.originalPrice - bonusItem.bonusPrice
+              savings: bonusItem.originalPrice - bonusItem.bonusPrice,
+              description: bonusItem.description || `Van €${bonusItem.originalPrice} voor €${bonusItem.bonusPrice}`,
+              validUntil: bonusItem.validUntil
             };
           }
           return null;
@@ -261,14 +285,14 @@ export const Recipes: React.FC = () => {
           savings: number;
         }>;
 
-      const totalSavings = bonusItems.reduce((sum, item) => sum + item.savings, 0);
+      const totalSavings = recipeBonusItems.reduce((sum, item) => sum + item.savings, 0);
 
       return {
         ...recipe,
         matchScore: matchingIngredients.length,
         matchingIngredients,
         missingIngredients,
-        bonusItems,
+        bonusItems: recipeBonusItems,
         totalSavings
       };
     });
@@ -304,13 +328,23 @@ export const Recipes: React.FC = () => {
 
   const refreshBonuses = async () => {
     setLoadingBonuses(true);
-    // Simulate AI agent fetching latest AH bonuses
-    await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // Recalculate with "updated" bonus data
-    const recipesWithAnalysis = calculateRecipeAnalysis(mockRecipes, fridgeItems);
-    setRecipes(recipesWithAnalysis);
-    setLoadingBonuses(false);
+    try {
+      // Use real AH bonus service to refresh data
+      const bonusResponse = await ahBonusService.refreshBonuses();
+      setBonusStatus({
+        lastUpdate: new Date(bonusResponse.lastUpdated),
+        itemCount: bonusResponse.bonuses.length,
+        source: bonusResponse.source
+      });
+    
+      // Recalculate with updated bonus data
+      const recipesWithAnalysis = calculateRecipeAnalysis(mockRecipes, fridgeItems, bonusResponse.bonuses);
+      setRecipes(recipesWithAnalysis);
+    } catch (error) {
+      console.error('Error refreshing bonuses:', error);
+    } finally {
+    }
   };
 
   if (loading) {
@@ -343,8 +377,8 @@ export const Recipes: React.FC = () => {
                   : 'bg-blue-500 text-white hover:bg-blue-600'
               }`}
             >
-              <Zap className={`h-5 w-5 ${loadingBonuses ? 'animate-spin' : ''}`} />
-              <span>{loadingBonuses ? 'Vernieuwen...' : 'AH Bonussen'}</span>
+              <RefreshCw className={`h-5 w-5 ${loadingBonuses ? 'animate-spin' : ''}`} />
+              <span>{loadingBonuses ? 'Vernieuwen...' : 'Vernieuw Bonussen'}</span>
             </button>
             <button
               onClick={() => setShowPersonalized(!showPersonalized)}
@@ -360,6 +394,36 @@ export const Recipes: React.FC = () => {
           </div>
         </div>
 
+        {/* Bonus Status Info */}
+        {bonusStatus.lastUpdate && (
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Database className="h-4 w-4 text-blue-600" />
+                <span className="text-sm font-medium text-blue-900">
+                  AH Bonussen Status
+                </span>
+              </div>
+              <div className="flex items-center space-x-4 text-xs text-blue-700">
+                <div className="flex items-center space-x-1">
+                  <Calendar className="h-3 w-3" />
+                  <span>
+                    Laatste update: {bonusStatus.lastUpdate.toLocaleDateString('nl-NL')} om {bonusStatus.lastUpdate.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+                <span>{bonusStatus.itemCount} bonusartikelen</span>
+                <span className={`px-2 py-1 rounded-full ${
+                  bonusStatus.source === 'fresh_scrape' ? 'bg-green-100 text-green-800' :
+                  bonusStatus.source === 'cache' ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  {bonusStatus.source === 'fresh_scrape' ? 'Vers opgehaald' :
+                   bonusStatus.source === 'cache' ? 'Uit cache' : 'Onbekend'}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
         {/* Search and Filters */}
         <div className="mb-6 space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
@@ -520,7 +584,12 @@ export const Recipes: React.FC = () => {
                       <div className="space-y-1">
                         {recipe.bonusItems.slice(0, 2).map((item, index) => (
                           <div key={index} className="flex justify-between text-xs">
-                            <span className="text-green-800">{item.name}</span>
+                            <div className="flex-1">
+                              <span className="text-green-800">{item.name}</span>
+                              {item.description && (
+                                <div className="text-green-600 text-xs">{item.description}</div>
+                              )}
+                            </div>
                             <span className="text-green-600 font-medium">-€{item.savings.toFixed(2)}</span>
                           </div>
                         ))}
