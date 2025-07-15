@@ -37,7 +37,7 @@ const commonIngredients = [
   { name: 'Sla', image: 'https://images.pexels.com/photos/1656666/pexels-photo-1656666.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
   { name: 'Courgette', image: 'https://images.pexels.com/photos/128420/pexels-photo-128420.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
   { name: 'Champignons', image: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
-  { name: 'Citroen', image: 'https://images.pexels.com/photos/1414130/pexels-photo-1414130.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' }
+  { name: 'Citroen', image: 'https://images.pexels.com/photos/1414130/pexels-photo-1414130.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'stuks' },
   
   // Vlees & Vis
   { name: 'Zalm', image: 'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=150', unit: 'gram' },
