@@ -13,6 +13,7 @@ import { Fridge } from './pages/Fridge';
 import { Recipes } from './pages/Recipes';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { Privacy } from './pages/Privacy';
+import { RecipeDetail } from './pages/RecipeDetail';
 
 function App() {
   const { user, loading } = useAuth();
@@ -57,6 +58,12 @@ function App() {
           <Route path="/recepten" element={
             <ProtectedRoute>
               <Recipes />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/recept/:id" element={
+            <ProtectedRoute>
+              <RecipeDetail />
             </ProtectedRoute>
           } />
           

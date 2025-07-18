@@ -607,9 +607,12 @@ export const Recipes: React.FC = () => {
                   )}
 
                   <div className="flex space-x-2">
-                    <button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition-colors">
+                    <Link 
+                      to={`/recept/${recipe.id}`}
+                      className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition-colors text-center"
+                    >
                       Bekijk Recept
-                    </button>
+                    </Link>
                     {recipe.missingIngredients && recipe.missingIngredients.length > 0 && (
                       <button className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg transition-colors">
                         <ShoppingCart className="h-4 w-4" />
